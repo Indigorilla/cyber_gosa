@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="초 켜기부터 소지 올리기까지, 게임 출시 대박을 비는 사이버 고사상">
+<meta property="og:title" content="출시 고사상">
+<meta property="og:description" content="초 켜고, 술 올리고, 삼배에 만 원. 출시 대박 기원 사이버 고사">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#16110f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='12' y='12' width='8' height='18' rx='1' fill='%23f3ead8'/%3E%3Cpath d='M16 2c5 6 5 10 0 9c-5 1-5-3 0-9z' fill='%23ffc94a'/%3E%3C/svg%3E">
+<title>출시 고사상</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 밤의 고사상. 위에 상차림 장면, 아래에 순서대로 지내는 의식 카드, 마지막에 축문과 점괘 */
+:root{
+  --night:#16110f;      /* 바탕: 옻칠한 듯한 밤 */
+  --lacquer:#2a1d18;    /* 상판 */
+  --hanji:#efe4cf;      /* 한지/본문 */
+  --hanji-dim:#b7a98f;
+  --dan:#c8362b;        /* 단청 붉은색 */
+  --gold:#e0b54a;       /* 촛불/금 */
+  --pine:#3f6b4f;       /* 지폐/청 */
+  --line:rgba(239,228,207,.14);
+  --f-display:"Nanum Myeongjo","Batang","AppleMyungjo",serif;
+  --f-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--night);color:var(--hanji);font-family:var(--f-body);font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.18em;color:var(--gold)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6vw,48px);line-height:1.15;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--dan)}
+.sub{color:var(--hanji-dim);margin:0;max-width:60ch}
+.name-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.name-row label{font-size:13px;color:var(--hanji-dim)}
+#gameName{font-family:var(--f-display);font-weight:700;font-size:18px;background:transparent;color:var(--hanji);
+  border:0;border-bottom:1px solid var(--gold);padding:4px 2px;min-width:0;width:min(320px,100%)}
+#gameName:focus{outline:none;border-bottom-color:var(--dan)}
+
+/* 상차림 */
+.scene{position:relative;border-radius:6px;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,#3a2620 0%,var(--night) 70%)}
+.scene svg{display:block;width:100%;height:auto}
+.scene.dim::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45);animation:bow .7s ease}
+@keyframes bow{0%{opacity:0}40%{opacity:1}100%{opacity:0}}
+.tally{position:absolute;top:12px;right:14px;font-size:12px;letter-spacing:.06em;color:var(--hanji-dim);text-align:right;font-variant-numeric:tabular-nums}
+.tally b{color:var(--gold);font-weight:400}
+.flame{opacity:0;transform-origin:center bottom;transition:opacity .4s}
+.lit .flame{opacity:1;animation:flick 1.4s ease-in-out infinite alternate}
+.lit .glow{opacity:.55}
+.glow{opacity:0;transition:opacity .6s}
+@keyframes flick{0%{transform:scale(1,1)}50%{transform:scale(.92,1.08)}100%{transform:scale(1.04,.95)}}
+#wine{transition:transform 1s ease;transform:scaleY(0);transform-origin:center bottom;transform-box:fill-box}
+.poured #wine{transform:scaleY(1)}
+.bill{animation:drop .5s ease}
+@keyframes drop{from{transform:translateY(-30px);opacity:0}to{transform:none;opacity:1}}
+.paper{position:absolute;left:50%;bottom:30%;width:46px;height:60px;margin-left:-23px;background:var(--hanji);opacity:0;pointer-events:none;border-radius:2px}
+.paper.go{animation:rise 2.6s ease-in forwards}
+@keyframes rise{0%{opacity:1;transform:translateY(0) rotate(0);filter:none;background:var(--hanji)}
+  45%{background:#e9a052}70%{opacity:.8;background:#5a3a2a}100%{opacity:0;transform:translateY(-220px) rotate(25deg) scale(.4)}}
+
+/* 의식 순서 */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.step{display:flex;flex-direction:column;gap:6px;padding:14px;border:1px solid var(--line);border-radius:4px;background:transparent;
+  color:var(--hanji);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s,background .2s}
+.step:hover:not(:disabled){border-color:var(--gold);background:rgba(224,181,74,.06)}
+.step:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.step:disabled{cursor:default;opacity:.45}
+.step .n{font-family:var(--f-display);font-size:13px;color:var(--dan);font-weight:700}
+.step .t{font-family:var(--f-display);font-weight:700;font-size:17px}
+.step .d{font-size:12.5px;color:var(--hanji-dim)}
+.step.done{border-color:rgba(224,181,74,.5)}
+.step.done .n::after{content:"  ✓";color:var(--gold)}
+
+/* 소원 */
+.panel{display:flex;flex-direction:column;gap:12px}
+h2{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:13.5px;color:var(--hanji);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--dan);border-color:var(--dan);color:#fff6ec}
+.chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#extra{font:inherit;background:transparent;color:var(--hanji);border:1px solid var(--line);border-radius:4px;padding:9px 11px;width:100%}
+#extra:focus{outline:none;border-color:var(--gold)}
+
+/* 축문 */
+.chukmun{background:var(--hanji);color:#2b1f17;border-radius:3px;padding:26px max(20px,4vw);font-family:var(--f-display);font-size:16px;line-height:2;
+  box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.chukmun .hd{font-weight:800;font-size:13px;letter-spacing:.3em;color:var(--dan);margin-bottom:8px}
+.chukmun p{margin:0 0 10px;max-width:60ch}
+.chukmun .end{font-weight:800;letter-spacing:.4em;text-align:right;color:var(--dan)}
+
+/* 점괘 */
+.omen{border:1px solid var(--gold);border-radius:4px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:center}
+.omen .seal{grid-row:span 3;width:84px;height:84px;border:3px solid var(--dan);color:var(--dan);font-family:var(--f-display);font-weight:800;
+  font-size:30px;display:grid;place-items:center;transform:rotate(-6deg);border-radius:6px}
+.omen .lv{font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--gold)}
+.omen ul{margin:0;padding-left:18px;color:var(--hanji)}
+.omen .note{font-size:12.5px;color:var(--hanji-dim)}
+@media (max-width:480px){.omen{grid-template-columns:1fr}.omen .seal{grid-row:auto}}
+.reset{align-self:flex-start;font:inherit;font-size:13px;background:none;border:0;color:var(--hanji-dim);text-decoration:underline;cursor:pointer;padding:0}
+footer{font-size:12px;color:var(--hanji-dim);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>html,body{margin:0}body{padding-top:max(28px,env(safe-area-inset-top,0px));padding-bottom:max(56px,env(safe-area-inset-bottom,0px))}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="dateLine">출시 고사</div>
+    <h1>대박 기원 <em>출시 고사</em></h1>
+    <p class="sub">초를 켜고, 술을 올리고, 절 세 번에 돼지 입에 만 원. 마지막에 소지를 올리면 이번 출시의 점괘가 나옵니다.</p>
+    <div class="name-row">
+      <label for="gameName">올리는 작품</label>
+      <input id="gameName" type="text" value="우리 게임" maxlength="30" autocomplete="off">
+    </div>
+  </header>
+
+  <div class="scene" id="scene">
+    <div class="tally">절 <b id="bowCount">0</b>/3 · 복채 <b id="money">₩0</b></div>
+    <svg viewBox="0 0 800 420" role="img" aria-label="돼지머리, 시루떡, 북어, 막걸리, 과일, 촛대가 놓인 고사상">
+      <defs>
+        <radialGradient id="g1"><stop offset="0" stop-color="#ffcf6b" stop-opacity=".9"/><stop offset="1" stop-color="#ffcf6b" stop-opacity="0"/></radialGradient>
+      </defs>
+      <!-- 병풍 느낌의 배경 선 -->
+      <g stroke="#efe4cf" stroke-opacity=".06" fill="none">
+        <path d="M100 0v250M240 0v250M380 0v250M520 0v250M660 0v250"/>
+      </g>
+      <!-- 상 -->
+      <rect x="40" y="300" width="720" height="26" rx="4" fill="#5a3426"/>
+      <rect x="40" y="296" width="720" height="8" rx="3" fill="#7a4632"/>
+      <rect x="70" y="326" width="22" height="80" fill="#4a2b20"/><rect x="708" y="326" width="22" height="80" fill="#4a2b20"/>
+      <path d="M92 340h616" stroke="#4a2b20" stroke-width="8"/>
+
+      <!-- 촛대 좌 -->
+      <g id="candleL">
+        <circle class="glow" cx="110" cy="160" r="70" fill="url(#g1)"/>
+        <rect x="100" y="185" width="20" height="90" rx="3" fill="#f3ead8"/>
+        <rect x="88" y="272" width="44" height="12" rx="3" fill="#a9822f"/>
+        <rect x="104" y="284" width="12" height="14" fill="#a9822f"/>
+        <path class="flame" d="M110 150c10 14 10 26 0 34c-10-8-10-20 0-34z" fill="#ffc94a"/>
+      </g>
+      <!-- 촛대 우 -->
+      <g id="candleR">
+        <circle class="glow" cx="690" cy="160" r="70" fill="url(#g1)"/>
+        <rect x="680" y="185" width="20" height="90" rx="3" fill="#f3ead8"/>
+        <rect x="668" y="272" width="44" height="12" rx="3" fill="#a9822f"/>
+        <rect x="684" y="284" width="12" height="14" fill="#a9822f"/>
+        <path class="flame" d="M690 150c10 14 10 26 0 34c-10-8-10-20 0-34z" fill="#ffc94a"/>
+      </g>
+
+      <!-- 시루떡 -->
+      <g>
+        <path d="M165 296h120l-10-60h-100z" fill="#8a4a2e"/>
+        <rect x="172" y="226" width="106" height="16" rx="2" fill="#c08a5a"/>
+        <rect x="172" y="214" width="106" height="14" rx="2" fill="#7e3a2a"/>
+        <rect x="172" y="202" width="106" height="14" rx="2" fill="#c08a5a"/>
+        <rect x="172" y="190" width="106" height="14" rx="2" fill="#7e3a2a"/>
+        <text x="225" y="275" text-anchor="middle" font-family="Nanum Myeongjo,serif" font-size="13" fill="#efe4cf" fill-opacity=".7">시루떡</text>
+      </g>
+
+      <!-- 돼지머리 -->
+      <g id="pig">
+        <ellipse cx="400" cy="292" rx="110" ry="10" fill="#000" fill-opacity=".35"/>
+        <path d="M318 150l-18-58 58 32z" fill="#e79d9a"/>
+        <path d="M482 150l18-58-58 32z" fill="#e79d9a"/>
+        <path d="M322 130l-10-26 26 16z" fill="#c9706f"/>
+        <path d="M478 130l10-26-26 16z" fill="#c9706f"/>
+        <ellipse cx="400" cy="200" rx="100" ry="88" fill="#f1b4ae"/>
+        <path d="M352 182q14-14 28 0" stroke="#5a2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M420 182q14-14 28 0" stroke="#5a2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="340" cy="210" rx="14" ry="8" fill="#e9898a" fill-opacity=".6"/>
+        <ellipse cx="460" cy="210" rx="14" ry="8" fill="#e9898a" fill-opacity=".6"/>
+        <ellipse cx="400" cy="232" rx="46" ry="32" fill="#e79d9a"/>
+        <ellipse cx="384" cy="230" rx="7" ry="11" fill="#7a3b3b"/>
+        <ellipse cx="416" cy="230" rx="7" ry="11" fill="#7a3b3b"/>
+        <path d="M368 268q32 18 64 0" stroke="#7a3b3b" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g id="bills"></g>
+      </g>
+
+      <!-- 북어 -->
+      <g transform="translate(520 250) rotate(-8)">
+        <path d="M0 22c20-26 90-28 120-10l26-14-6 22 6 22-26-14c-30 18-100 16-120-6z" fill="#cdb48a"/>
+        <circle cx="16" cy="18" r="3" fill="#3a2a1a"/>
+        <g stroke="#f4f0e6" stroke-width="4"><path d="M58 2v38M66 2v38M74 2v38"/></g>
+      </g>
+      <text x="590" y="296" text-anchor="middle" font-family="Nanum Myeongjo,serif" font-size="13" fill="#efe4cf" fill-opacity=".7">북어·실타래</text>
+
+      <!-- 막걸리 사발 -->
+      <g>
+        <path d="M290 272h60l-6 24h-48z" fill="#d9cfbd"/>
+        <ellipse cx="320" cy="272" rx="30" ry="7" fill="#b6ab98"/>
+        <ellipse id="wine" cx="320" cy="272" rx="26" ry="5" fill="#f6f1e6"/>
+      </g>
+
+      <!-- 과일 -->
+      <g>
+        <circle cx="468" cy="280" r="16" fill="#c8362b"/><path d="M468 264v-6" stroke="#5a3a1a" stroke-width="3"/>
+        <circle cx="500" cy="282" r="14" fill="#e3c35a"/>
+      </g>
+    </svg>
+    <div class="paper" id="paper"></div>
+  </div>
+
+  <section class="panel">
+    <h2>고사 순서</h2>
+    <div class="steps">
+      <button class="step" id="s1" type="button"><span class="n">하나</span><span class="t">초 밝히기</span><span class="d">양쪽 촛불을 켭니다</span></button>
+      <button class="step" id="s2" type="button"><span class="n">둘</span><span class="t">술 올리기</span><span class="d">막걸리 한 사발 따르기</span></button>
+      <button class="step" id="s3" type="button"><span class="n">셋</span><span class="t">절 올리기</span><span class="d" id="bowHint">세 번 눌러 삼배</span></button>
+      <button class="step" id="s4" type="button"><span class="n">넷</span><span class="t">만 원 꽂기</span><span class="d">돼지 입에 복채, 여러 번 가능</span></button>
+      <button class="step" id="s5" type="button"><span class="n">다섯</span><span class="t">소지 올리기</span><span class="d" id="s5hint">앞의 순서를 마치면 열립니다</span></button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>빌 것</h2>
+    <div class="chips" id="chips"></div>
+    <input id="extra" type="text" maxlength="60" placeholder="따로 빌 소원 (예: 런칭 이벤트 서버비 걱정 없게)">
+  </section>
+
+  <section class="chukmun" aria-live="polite">
+    <div class="hd">祝文 · 축문</div>
+    <div id="chukText"></div>
+    <div class="end">尙饗</div>
+  </section>
+
+  <section class="omen" id="omen" hidden aria-live="polite">
+    <div class="seal" id="seal">大吉</div>
+    <div class="lv" id="omenLv"></div>
+    <ul id="omenList"></ul>
+    <div class="note">음복은 팀원 모두와 함께. 남은 떡은 QA팀 먼저.</div>
+  </section>
+  <button class="reset" id="reset" type="button" hidden>다시 지내기</button>
+
+  <footer>정성이 빌드를 살린다</footer>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const scene=$('scene');
+  const today=new Date();
+  const ymd=`${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
+  $('dateLine').textContent='출시 고사 · '+ymd;
+
+  const WISHES=[
+    ['review','심사 한 번에 통과'],['crash','크래시 없이'],['server','서버 접속 폭주에도 끄떡없이'],
+    ['build','출시 당일 빌드 안 깨지게'],['rating','별점 4.5 이상'],['sales','매출 순위 상승'],
+    ['hotfix','핫픽스 없는 주말'],['featured','스토어 피처드']
+  ];
+  const picked=new Set(['review','crash','server']);
+  const chips=$('chips');
+  WISHES.forEach(([k,label])=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='chip';b.id='w-'+k;b.textContent=label;
+    b.setAttribute('aria-pressed',picked.has(k));
+    b.onclick=()=>{picked.has(k)?picked.delete(k):picked.add(k);b.setAttribute('aria-pressed',picked.has(k));render();};
+    chips.appendChild(b);
+  });
+
+  const st={lit:false,poured:false,bows:0,bills:0,done:false};
+
+  function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+  function render(){
+    scene.classList.toggle('lit',st.lit);
+    scene.classList.toggle('poured',st.poured);
+    $('bowCount').textContent=st.bows;
+    $('money').textContent='₩'+(st.bills*10000).toLocaleString('ko-KR');
+    $('s1').classList.toggle('done',st.lit);$('s1').disabled=st.lit||st.done;
+    $('s2').classList.toggle('done',st.poured);$('s2').disabled=st.poured||st.done;
+    $('s3').classList.toggle('done',st.bows>=3);$('s3').disabled=st.bows>=3||st.done;
+    $('bowHint').textContent=st.bows>=3?'삼배를 마쳤습니다':`세 번 눌러 삼배 (${st.bows}/3)`;
+    $('s4').classList.toggle('done',st.bills>0);$('s4').disabled=st.done;
+    const ready=st.lit&&st.poured&&st.bows>=3&&st.bills>0;
+    $('s5').disabled=!ready||st.done;$('s5').classList.toggle('done',st.done);
+    $('s5hint').textContent=st.done?'소지를 올렸습니다':ready?'축문을 태워 하늘로':'앞의 순서를 마치면 열립니다';
+
+    const name=esc($('gameName').value.trim()||'우리 게임');
+    const ws=WISHES.filter(([k])=>picked.has(k)).map(([,l])=>l);
+    const extra=$('extra').value.trim();
+    if(extra) ws.push(esc(extra));
+    const wishLine=ws.length?ws.join(', ')+' 하기를':'무탈하기를';
+    $('chukText').innerHTML=
+      `<p>維歲次 ${ymd}, 개발팀 일동은 삼가 천지신명과 스토어 심사관과 서버의 신께 고하나이다.</p>`+
+      `<p>오늘 <b>${name}</b>을(를) 세상에 내놓으니, ${wishLine} 엎드려 비옵니다.</p>`+
+      `<p>정성껏 돼지머리와 시루떡, 북어와 맑은 술을 올리고 복채 ${(st.bills*10000).toLocaleString('ko-KR')}원을 바치오니 부디 굽어살피소서.</p>`;
+  }
+
+  $('s1').onclick=()=>{st.lit=true;render();};
+  $('s2').onclick=()=>{st.poured=true;render();};
+  $('s3').onclick=()=>{
+    if(st.bows>=3)return;st.bows++;
+    scene.classList.remove('dim');void scene.offsetWidth;scene.classList.add('dim');
+    render();
+  };
+  $('s4').onclick=()=>{
+    st.bills++;
+    const g=$('bills');
+    const ns='http://www.w3.org/2000/svg';
+    const r=document.createElementNS(ns,'g');
+    const i=st.bills-1;
+    const slots=[[400,268,0],[330,128,-30],[470,128,30],[388,272,-12],[412,272,12]];
+    const [x,y,a]=slots[i%slots.length];
+    const off=Math.floor(i/slots.length)*5;
+    r.setAttribute('transform',`translate(${x} ${y-off}) rotate(${a})`);
+    r.innerHTML='<g class="bill"><rect x="-26" y="-12" width="52" height="24" rx="2" fill="#8fae86" stroke="#3f6b4f" stroke-width="1.5"/><circle cx="12" cy="0" r="6" fill="none" stroke="#3f6b4f" stroke-width="1.5"/><text x="-12" y="4" font-size="9" fill="#2c4a36" font-family="sans-serif">10000</text></g>';
+    g.appendChild(r);
+    render();
+  };
+
+  const OMENS=[
+    '리뷰 심사관이 첫눈에 승인 버튼을 누른다','첫 주 크래시 프리 유저 99.9%','빌드 머신이 출시 당일 지치지 않는다',
+    '핫픽스 없이 주말을 푹 쉰다','스토어 피처드에 이름이 오른다','동접이 몰려도 서버가 웃으며 버틴다',
+    '리뷰란에 "갓겜"이 쌓인다','SDK 업데이트가 출시 뒤로 미뤄진다','마켓 순위 그래프가 오른쪽 위로 뻗는다',
+    'QA가 놓친 버그를 유저도 못 찾는다'
+  ];
+  $('s5').onclick=()=>{
+    st.done=true;render();
+    const p=$('paper');p.classList.remove('go');void p.offsetWidth;p.classList.add('go');
+    const pool=OMENS.slice().sort(()=>Math.random()-.5).slice(0,3);
+    const big=st.bills>=3;
+    $('seal').textContent=big?'大吉':'吉';
+    $('omenLv').textContent=big?'대길(大吉) · 출시 대박의 괘':'길(吉) · 무난하게 순항하는 괘';
+    $('omenList').innerHTML=pool.map(s=>`<li>${s}</li>`).join('')+(big?'':'<li>복채를 더 꽂았으면 대길이었을 운</li>');
+    setTimeout(()=>{$('omen').hidden=false;$('reset').hidden=false;$('omen').scrollIntoView({behavior:'smooth',block:'center'});},1400);
+  };
+  $('reset').onclick=()=>{
+    Object.assign(st,{lit:false,poured:false,bows:0,bills:0,done:false});
+    $('bills').innerHTML='';$('omen').hidden=true;$('reset').hidden=true;render();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+  $('gameName').addEventListener('input',render);
+  $('extra').addEventListener('input',render);
+  render();
+})();
+</script>
+
+</body>
+</html>

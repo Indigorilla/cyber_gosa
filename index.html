@@ -96,7 +96,7 @@ h2{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0}
 /* 점괘 */
 .omen{border:1px solid var(--gold);border-radius:4px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:center}
 .omen .seal{grid-row:span 3;width:84px;height:84px;border:3px solid var(--dan);color:var(--dan);font-family:var(--f-display);font-weight:800;
-  font-size:30px;display:grid;place-items:center;transform:rotate(-6deg);border-radius:6px}
+  font-size:26px;display:grid;place-items:center;transform:rotate(-6deg);border-radius:6px}
 .omen .lv{font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--gold)}
 .omen ul{margin:0;padding-left:18px;color:var(--hanji)}
 .omen .note{font-size:12.5px;color:var(--hanji-dim)}
@@ -224,13 +224,13 @@ footer{font-size:12px;color:var(--hanji-dim);text-align:center}
   </section>
 
   <section class="chukmun" aria-live="polite">
-    <div class="hd">祝文 · 축문</div>
+    <div class="hd">축문</div>
     <div id="chukText"></div>
-    <div class="end">尙饗</div>
+    <div class="end">상향</div>
   </section>
 
   <section class="omen" id="omen" hidden aria-live="polite">
-    <div class="seal" id="seal">大吉</div>
+    <div class="seal" id="seal">대길</div>
     <div class="lv" id="omenLv"></div>
     <ul id="omenList"></ul>
     <div class="note">음복은 팀원 모두와 함께. 남은 떡은 QA팀 먼저.</div>
@@ -287,7 +287,7 @@ footer{font-size:12px;color:var(--hanji-dim);text-align:center}
     if(extra) ws.push(esc(extra));
     const wishLine=ws.length?ws.join(', ')+' 하기를':'무탈하기를';
     $('chukText').innerHTML=
-      `<p>維歲次 ${ymd}, 개발팀 일동은 삼가 천지신명과 스토어 심사관과 서버의 신께 고하나이다.</p>`+
+      `<p>유세차 ${ymd}, 개발팀 일동은 삼가 천지신명과 스토어 심사관과 서버의 신께 고하나이다.</p>`+
       `<p>오늘 <b>${name}</b>을(를) 세상에 내놓으니, ${wishLine} 엎드려 비옵니다.</p>`+
       `<p>정성껏 돼지머리와 시루떡, 북어와 맑은 술을 올리고 복채 ${(st.bills*10000).toLocaleString('ko-KR')}원을 바치오니 부디 굽어살피소서.</p>`;
   }
@@ -325,8 +325,8 @@ footer{font-size:12px;color:var(--hanji-dim);text-align:center}
     const p=$('paper');p.classList.remove('go');void p.offsetWidth;p.classList.add('go');
     const pool=OMENS.slice().sort(()=>Math.random()-.5).slice(0,3);
     const big=st.bills>=3;
-    $('seal').textContent=big?'大吉':'吉';
-    $('omenLv').textContent=big?'대길(大吉) · 출시 대박의 괘':'길(吉) · 무난하게 순항하는 괘';
+    $('seal').textContent=big?'대길':'길';
+    $('omenLv').textContent=big?'대길 · 출시 대박의 괘':'길 · 무난하게 순항하는 괘';
     $('omenList').innerHTML=pool.map(s=>`<li>${s}</li>`).join('')+(big?'':'<li>복채를 더 꽂았으면 대길이었을 운</li>');
     setTimeout(()=>{$('omen').hidden=false;$('reset').hidden=false;$('omen').scrollIntoView({behavior:'smooth',block:'center'});},1400);
   };
